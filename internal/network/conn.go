@@ -19,3 +19,5 @@ func MakeMinecraftConn(logger zerolog.Logger, conn net.Conn) MinecraftConn {
 		conn:   conn,
 	}
 }
+
+var _ MinecraftConn = (*minecraftConn)(nil)
