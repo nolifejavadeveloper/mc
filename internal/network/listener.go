@@ -38,7 +38,7 @@ func (l listener) StartListening(addr string) {
 					continue
 				}
 
-				l.handleConnection(conn)
+				go l.handleConnection(conn)
 			}
 		}
 	}()
