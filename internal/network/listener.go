@@ -5,17 +5,12 @@ import (
 	"net"
 )
 
-type Listener interface {
-	StartListening(addr string)
-	StopListening()
-}
-
-type listener struct {
+type Listener struct {
 	logger    zerolog.Logger
 	closeChan chan struct{}
 }
 
-func (l listener) StartListening(addr string) {
+func (l *Listener) StartListening(addr string) {
 	go func() {
 		tcpListener, err := net.Listen("tcp", addr)
 		if err != nil {
@@ -44,13 +39,11 @@ func (l listener) StartListening(addr string) {
 	}()
 }
 
-func (l listener) handleConnection(conn net.Conn) {
+func (l *Listener) handleConnection(conn net.Conn) {
 
 }
 
-func (l listener) StopListening() {
+func (l *Listener) StopListening() {
 	//TODO implement me
 	panic("implement me")
 }
-
-var _ Listener = (*listener)(nil)
