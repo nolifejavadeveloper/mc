@@ -13,11 +13,15 @@ type minecraftConn struct {
 	conn   net.Conn
 }
 
-func MakeMinecraftConn(logger zerolog.Logger, conn net.Conn) MinecraftConn {
+func makeMinecraftConn(logger zerolog.Logger, conn net.Conn) MinecraftConn {
 	return &minecraftConn{
-		logger: logger,
+		logger: logger.With().Str("ip", conn.RemoteAddr().String()).Logger(),
 		conn:   conn,
 	}
+}
+
+func (mc *minecraftConn) Read() {
+
 }
 
 var _ MinecraftConn = (*minecraftConn)(nil)
