@@ -32,3 +32,22 @@ func (b *Buffer) ReadBytes(n int) []byte {
 	return data
 }
 
+func (b *Buffer) ReadVarInt() int32 {
+	int pos = 0
+	int32 val = 0;
+	for {
+		val |= (byt & 0x7F) << pos
+		pos += 7
+		if (pos >= 32) {
+			// varint too large
+			//TODO: add error handling 
+		}
+
+		if byt & 0x80 == 0 {
+			break
+		}
+	}
+
+	return val;
+}
+
