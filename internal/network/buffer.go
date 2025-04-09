@@ -16,18 +16,19 @@ func (b *Buffer) advancePointer(n int) {
 	b.pointer += n
 }
 
-func (b *Buffer) readByte() byte {
+func (b *Buffer) ReadByte() byte {
 	data := b.data[b.pointer]
 
-	b.advancePointer(1);
+	b.advancePointer(1)
 
 	return data
 }
 
-func (b *Buffer) readBytes(n int) []byte {
+func (b *Buffer) ReadBytes(n int) []byte {
 	data := b.data[b.pointer : b.pointer + n]
 
-	b.advancePointer(n);
+	b.advancePointer(n)
 
 	return data
 }
+
