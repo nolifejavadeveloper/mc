@@ -51,3 +51,7 @@ func (b *Buffer) ReadVarInt() int32 {
 	return val;
 }
 
+func (b *Buffer) Size() int {
+	return len(b.data)
+}
+
