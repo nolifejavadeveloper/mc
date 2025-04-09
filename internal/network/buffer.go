@@ -16,7 +16,7 @@ func (b *Buffer) advancePointer(n int) {
 	b.pointer += n
 }
 
-func (b *Buffer) ReadByte() byte {
+func (b *Buffer) ReadByte() (byte, error) {
 	data := b.data[b.pointer]
 
 	b.advancePointer(1)
@@ -24,7 +24,7 @@ func (b *Buffer) ReadByte() byte {
 	return data
 }
 
-func (b *Buffer) ReadBytes(n int) []byte {
+func (b *Buffer) ReadBytes(n int) ([]byte, error) {
 	data := b.data[b.pointer : b.pointer + n]
 
 	b.advancePointer(n)
@@ -32,7 +32,7 @@ func (b *Buffer) ReadBytes(n int) []byte {
 	return data
 }
 
-func (b *Buffer) ReadVarInt() int32 {
+func (b *Buffer) ReadVarInt() (int32, error){
 	int pos = 0
 	int32 val = 0;
 	for {
