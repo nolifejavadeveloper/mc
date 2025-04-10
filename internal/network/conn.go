@@ -12,7 +12,7 @@ type MinecraftConn struct {
 
 func makeMinecraftConn(logger zerolog.Logger, conn net.Conn) *MinecraftConn {
 	return &MinecraftConn{
-		logger: logger.With().Str("ip", conn.RemoteAddr().String()).Logger(),
+		logger: logger.With().Str("addr", conn.RemoteAddr().String()).Logger(),
 		conn:   conn,
 	}
 }
