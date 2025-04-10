@@ -42,6 +42,34 @@ func (b *Buffer) ReadBytes(n int) ([]byte, error) {
 	return data, nil
 }
 
+func (b *Buffer) ReadInt16() (int16, error) {
+	bytes, err := b.ReadBytes(2)
+	if (err != nil) {
+		return  0, err
+	}
+
+	return int16(bytes[0]) << 8 | int16(bytes[1]), nil
+}
+
+func (b *Buffer) ReadInt32() (int32, error) {
+	bytes, err := b.ReadBytes(4)
+	if (err != nil) {
+		return  0, err
+	}
+
+	return int32(bytes[0]) << 24 | int32(bytes[0]) << 16 | int32(bytes[0]) << 8 | int32(bytes[1]), nil
+}
+
+func (b *Buffer) ReadInt64() (int64, error) {
+	bytes, err := b.ReadBytes(4)
+	if (err != nil) {
+		return  0, err
+	}
+
+	return int64(bytes[0]) << 56 | int64(bytes[0]) << 48 | int64(bytes[0]) << 40 | int64(bytes[1]) << 32 | int64(bytes[0]) << 24 | int64(bytes[0]) << 16 | int64(bytes[0]) << 8 | int64(bytes[1]), nil
+}
+
+
 func (b *Buffer) ReadVarInt() (int32, error) {
 	var pos int = 0
 
@@ -70,4 +98,3 @@ func (b *Buffer) ReadVarInt() (int32, error) {
 func (b *Buffer) Size() int {
 	return len(b.data)
 }
-
