@@ -29,6 +29,11 @@ func (b *Buffer) ReadByte() (byte, error) {
 	return data, nil
 }
 
+func (b *Buffer) ReadUInt8() (uint8, error) {
+	val, err := b.ReadByte()
+	return uint8(val), err
+}
+
 func (b *Buffer) Read(n int) ([]byte, error) {
 	if b.pointer+n < b.Size() {
 		return nil, errors.New("out of bounds")
@@ -50,6 +55,11 @@ func (b *Buffer) ReadUInt16() (uint16, error) {
 	return uint16(bytes[0])<<8 | uint16(bytes[1]), nil
 }
 
+func (b *Buffer) ReadInt16() (int16, error) {
+	val, err := b.ReadInt16()
+	return int16(val), err
+}
+
 func (b *Buffer) ReadUInt32() (uint32, error) {
 	bytes, err := b.Read(4)
 	if err != nil {
@@ -57,6 +67,11 @@ func (b *Buffer) ReadUInt32() (uint32, error) {
 	}
 
 	return uint32(bytes[0])<<24 | uint32(bytes[1])<<16 | uint32(bytes[2])<<8 | uint32(bytes[3]), nil
+}
+
+func (b *Buffer) ReadInt32() (int32, error) {
+	val, err := b.ReadUInt32()
+	return int32(val), err
 }
 
 func (b *Buffer) ReadUInt64() (uint64, error) {
@@ -67,6 +82,12 @@ func (b *Buffer) ReadUInt64() (uint64, error) {
 
 	return uint64(bytes[0])<<56 | uint64(bytes[1])<<48 | uint64(bytes[2])<<40 | uint64(bytes[3])<<32 | uint64(bytes[4])<<24 | uint64(bytes[5])<<16 | uint64(bytes[6])<<8 | uint64(bytes[7]), nil
 }
+
+func (b *Buffer) ReadInt64() (int64, error) {
+	val, err := b.ReadUInt32()
+	return int64(val), err
+}
+
 func (b *Buffer) ReadVarInt() (int32, error) {
 	var pos int = 0
 
