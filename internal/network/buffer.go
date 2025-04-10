@@ -18,6 +18,18 @@ func (b *Buffer) advancePointer(n int) {
 	b.pointer += n
 }
 
+func (b *Buffer) Read(n int) ([]byte, error) {
+	if b.pointer+n < b.Size() {
+		return nil, errors.New("out of bounds")
+	}
+
+	data := b.data[b.pointer : b.pointer+n]
+
+	b.advancePointer(n)
+
+	return data, nil
+}
+
 func (b *Buffer) ReadByte() (byte, error) {
 	if b.pointer < b.Size() {
 		return 0, errors.New("out of bounds")
@@ -32,18 +44,6 @@ func (b *Buffer) ReadByte() (byte, error) {
 func (b *Buffer) ReadUInt8() (uint8, error) {
 	val, err := b.ReadByte()
 	return uint8(val), err
-}
-
-func (b *Buffer) Read(n int) ([]byte, error) {
-	if b.pointer+n < b.Size() {
-		return nil, errors.New("out of bounds")
-	}
-
-	data := b.data[b.pointer : b.pointer+n]
-
-	b.advancePointer(n)
-
-	return data, nil
 }
 
 func (b *Buffer) ReadUInt16() (uint16, error) {
