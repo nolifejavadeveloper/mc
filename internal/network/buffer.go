@@ -9,7 +9,7 @@ type Buffer struct {
 
 func makeBuffer(data []byte) *Buffer {
 	return &Buffer{
-		data: data,
+		data:    data,
 		pointer: 0,
 	}
 }
@@ -19,7 +19,7 @@ func (b *Buffer) advancePointer(n int) {
 }
 
 func (b *Buffer) ReadByte() (byte, error) {
-	if (b.pointer < b.Size()) {
+	if b.pointer < b.Size() {
 		return 0, errors.New("out of bounds")
 	}
 
@@ -31,12 +31,12 @@ func (b *Buffer) ReadByte() (byte, error) {
 }
 
 func (b *Buffer) ReadBytes(n int) ([]byte, error) {
-	if (b.pointer + n < b.Size()) {
+	if b.pointer+n < b.Size() {
 		return nil, errors.New("out of bounds")
 	}
 
-	data := b.data[b.pointer : b.pointer + n]
-	
+	data := b.data[b.pointer : b.pointer+n]
+
 	b.advancePointer(n)
 
 	return data, nil
@@ -45,29 +45,28 @@ func (b *Buffer) ReadBytes(n int) ([]byte, error) {
 func (b *Buffer) ReadVarInt() (int32, error) {
 	var pos int = 0
 
-	var val int32 = 0;
+	var val int32 = 0
 	for {
 		byt, err := b.ReadByte()
-		if (err != nil) {
+		if err != nil {
 			return 0, err
 		}
 
-		val |= int32(byt & 0x7F) << pos
+		val |= int32(byt&0x7F) << pos
 		pos += 7
-		if(pos >= 32) { 
+		if pos >= 32 {
 			// varint too large
 			return 0, errors.New("VarInt too large")
 		}
 
-		if byt & 0x80 == 0 {
+		if byt&0x80 == 0 {
 			break
 		}
 	}
 
-	return val, nil;
+	return val, nil
 }
 
 func (b *Buffer) Size() int {
 	return len(b.data)
 }
-
