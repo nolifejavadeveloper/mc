@@ -30,7 +30,7 @@ func (b *Buffer) ReadByte() (byte, error) {
 	return data, nil
 }
 
-func (b *Buffer) ReadBytes(n int) ([]byte, error) {
+func (b *Buffer) Read(n int) ([]byte, error) {
 	if b.pointer+n < b.Size() {
 		return nil, errors.New("out of bounds")
 	}
