@@ -7,7 +7,7 @@ type Buffer struct {
 	pointer int
 }
 
-func makeBuffer(data []byte) *Buffer {
+func MakeBuffer1(data []byte) *Buffer {
 	return &Buffer{
 		data:    data,
 		pointer: 0,
