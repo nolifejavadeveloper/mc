@@ -44,6 +44,5 @@ func (l *Listener) handleConnection(conn net.Conn) {
 }
 
 func (l *Listener) StopListening() {
-	//TODO implement me
-	panic("implement me")
+	l.closeChan <- struct{}{}
 }
