@@ -56,7 +56,7 @@ func (b *Buffer) ReadUInt16() (uint16, error) {
 }
 
 func (b *Buffer) ReadInt16() (int16, error) {
-	val, err := b.ReadInt16()
+	val, err := b.ReadUInt16()
 	return int16(val), err
 }
 
@@ -84,7 +84,7 @@ func (b *Buffer) ReadUInt64() (uint64, error) {
 }
 
 func (b *Buffer) ReadInt64() (int64, error) {
-	val, err := b.ReadUInt32()
+	val, err := b.ReadUInt64()
 	return int64(val), err
 }
 
