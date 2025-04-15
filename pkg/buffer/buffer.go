@@ -177,7 +177,7 @@ func (b *Buffer) WriteInt64(data int64) {
 
 func (b *Buffer) WriteVarInt(data int32) {
 	for {
-		if data&0x80 == 0 {
+		if data & ^0x7F == 0 {
 			b.WriteByte(byte(data))
 			return
 		}
@@ -190,7 +190,7 @@ func (b *Buffer) WriteVarInt(data int32) {
 
 func (b *Buffer) WriteVarLong(data int64) {
 	for {
-		if data&0x80 == 0 {
+		if data & ^0x7F == 0 {
 			b.WriteByte(byte(data))
 			return
 		}
