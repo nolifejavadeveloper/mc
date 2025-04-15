@@ -10,7 +10,7 @@ type Listener struct {
 	closeChan chan struct{}
 }
 
-func NewListener(logger zerolog.Logger) *Listener {
+func MakeListener(logger zerolog.Logger) *Listener {
 	return &Listener{
 		logger:    logger,
 		closeChan: make(chan struct{}),
@@ -19,11 +19,14 @@ func NewListener(logger zerolog.Logger) *Listener {
 
 func (l *Listener) StartListening(addr string) {
 	go func() {
+
 		tcpListener, err := net.Listen("tcp", addr)
 		if err != nil {
 			l.logger.Panic().Err(err).Msg("Error starting TCP listener")
 			return
 		}
+
+		l.logger.Info().Msg("Listening on " + addr)
 
 		for {
 			select {
@@ -47,7 +50,10 @@ func (l *Listener) StartListening(addr string) {
 }
 
 func (l *Listener) handleConnection(conn net.Conn) {
+	l.logger.Info().Msg("New connection from " + conn.RemoteAddr().String())
 
+	mc := makeMinecraftConn(l.logger, conn)
+	mc.StartReading()
 }
 
 func (l *Listener) StopListening() {
