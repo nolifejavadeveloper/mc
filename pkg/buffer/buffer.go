@@ -3,17 +3,16 @@ package buffer
 import "errors"
 
 type Buffer struct {
-	data    []byte
+	Data    []byte
 	pointer int
 }
 
 func MakeBuffer(data []byte) *Buffer {
 	return &Buffer{
-		data:    data,
+		Data:    data,
 		pointer: 0,
 	}
 }
-
 func (b *Buffer) advancePointer(n int) {
 	b.pointer += n
 }
@@ -23,7 +22,7 @@ func (b *Buffer) Read(n int) ([]byte, error) {
 		return nil, errors.New("out of bounds")
 	}
 
-	data := b.data[b.pointer : b.pointer+n]
+	data := b.Data[b.pointer : b.pointer+n]
 
 	b.advancePointer(n)
 
@@ -35,7 +34,7 @@ func (b *Buffer) ReadByte() (byte, error) {
 		return 0, errors.New("out of bounds")
 	}
 
-	data := b.data[b.pointer]
+	data := b.Data[b.pointer]
 
 	b.advancePointer(1)
 	return data, nil
@@ -114,5 +113,5 @@ func (b *Buffer) ReadVarInt() (int32, error) {
 }
 
 func (b *Buffer) Size() int {
-	return len(b.data)
+	return len(b.Data)
 }
