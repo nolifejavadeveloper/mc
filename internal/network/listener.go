@@ -10,6 +10,13 @@ type Listener struct {
 	closeChan chan struct{}
 }
 
+func NewListener(logger zerolog.Logger) *Listener {
+	return &Listener{
+		logger:    logger,
+		closeChan: make(chan struct{}),
+	}
+}
+
 func (l *Listener) StartListening(addr string) {
 	go func() {
 		tcpListener, err := net.Listen("tcp", addr)
