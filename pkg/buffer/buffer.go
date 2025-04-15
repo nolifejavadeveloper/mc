@@ -74,7 +74,7 @@ func (b *Buffer) ReadInt32() (int32, error) {
 }
 
 func (b *Buffer) ReadUInt64() (uint64, error) {
-	bytes, err := b.Read(4)
+	bytes, err := b.Read(8)
 	if err != nil {
 		return 0, err
 	}
