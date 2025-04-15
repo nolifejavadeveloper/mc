@@ -21,9 +21,9 @@ func makeMinecraftConn(logger zerolog.Logger, conn net.Conn) *MinecraftConn {
 	}
 }
 
-func (c *MinecraftConn) Read() {
-	buf := buffer.MakeBuffer(make([]byte, 0, BufferLength))
-	_, err := c.conn.Read(buf.Data)
+func (c *MinecraftConn) StartReading() {
+	buf := buffer.MakeBuffer(make([]byte, BufferLength))
+	bytesRead, err := c.conn.Read(buf.Data)
 	if err != nil {
 		if err == io.EOF {
 			c.logger.Debug().Msg("EOF: Connection closed")
@@ -31,6 +31,13 @@ func (c *MinecraftConn) Read() {
 		}
 		c.logger.Warn().Err(err).Msg("Error reading from connection")
 	}
+
+	if bytesRead == 0 {
+		c.logger.Debug().Msg("0 bytes read")
+		return
+	}
+
+	c.logger.Debug().Msgf("Read %d bytes", bytesRead)
 
 	packetLen, err := buf.ReadVarInt()
 	if err != nil {
@@ -40,7 +47,7 @@ func (c *MinecraftConn) Read() {
 
 	if packetLen > BufferLength {
 		targetLength := packetLen - BufferLength
-		newData := make([]byte, 0, targetLength)
+		newData := make([]byte, targetLength)
 
 		for len(newData) != int(targetLength) {
 			_, err = c.conn.Read(newData)
@@ -58,6 +65,13 @@ func (c *MinecraftConn) Read() {
 	}
 
 	// TODO: add handling for multiple packets in one read
+}
+
+func (c *MinecraftConn) write(buf *buffer.Buffer) {
+	_, err := c.conn.Write(buf.Data)
+	if err != nil {
+		c.logger.Warn().Err(err).Msg("Error writing to connection")
+	}
 }
 
 func (c *MinecraftConn) Close() {
