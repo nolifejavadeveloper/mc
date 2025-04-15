@@ -18,7 +18,7 @@ func (b *Buffer) advancePointer(n int) {
 }
 
 func (b *Buffer) Read(n int) ([]byte, error) {
-	if b.pointer+n < b.Size() {
+	if b.pointer+n >= b.Size() {
 		return nil, errors.New("out of bounds")
 	}
 
@@ -30,7 +30,7 @@ func (b *Buffer) Read(n int) ([]byte, error) {
 }
 
 func (b *Buffer) ReadByte() (byte, error) {
-	if b.pointer < b.Size() {
+	if b.pointer >= b.Size() {
 		return 0, errors.New("out of bounds")
 	}
 
