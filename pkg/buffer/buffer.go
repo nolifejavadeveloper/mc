@@ -18,7 +18,7 @@ func (b *Buffer) advancePointer(n int) {
 }
 
 func (b *Buffer) Read(n int) ([]byte, error) {
-	if b.pointer+n >= b.Size() {
+	if b.pointer+n > b.Size() {
 		return nil, errors.New("out of bounds")
 	}
 
@@ -156,7 +156,7 @@ func (b *Buffer) WriteUInt16(data uint16) {
 }
 
 func (b *Buffer) WriteInt16(data int16) {
-	b.WriteUInt32(uint32(data))
+	b.WriteUInt16(uint16(data))
 }
 
 func (b *Buffer) WriteUInt32(data uint32) {
