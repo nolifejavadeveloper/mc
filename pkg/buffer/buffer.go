@@ -107,6 +107,95 @@ func (b *Buffer) ReadVarInt() (int32, error) {
 	return val, nil
 }
 
+func (b *Buffer) ReadVarLong() (int64, error) {
+	var pos int = 0
+
+	var val int64 = 0
+	for {
+		byt, err := b.ReadByte()
+		if err != nil {
+			return 0, err
+		}
+
+		val |= int64(byt&0x7F) << pos
+		pos += 7
+		if pos >= 64 {
+			// varint too large
+			return 0, errors.New("VarLong too large")
+		}
+
+		if byt&0x80 == 0 {
+			break
+		}
+	}
+
+	return val, nil
+}
+
+// WRITE
+
+func (b *Buffer) Write(data []byte) {
+	b.Data = append(b.Data, data...)
+}
+
+func (b *Buffer) WriteByte(data byte) {
+	b.Data = append(b.Data, data)
+}
+
+func (b *Buffer) WriteInt8(data int8) {
+	b.WriteByte(byte(data))
+}
+
+func (b *Buffer) WriteUInt16(data uint16) {
+	b.Data = append(b.Data, byte(data>>8), byte(data))
+}
+
+func (b *Buffer) WriteInt16(data int16) {
+	b.WriteUInt32(uint32(data))
+}
+
+func (b *Buffer) WriteUInt32(data uint32) {
+	b.Data = append(b.Data, byte(data>>24), byte(data>>16), byte(data>>8), byte(data))
+}
+
+func (b *Buffer) WriteInt32(data int32) {
+	b.WriteUInt32(uint32(data))
+}
+
+func (b *Buffer) WriteUInt64(data uint64) {
+	b.Data = append(b.Data, byte(data>>56), byte(data>>48), byte(data>>40), byte(data>>32), byte(data>>24), byte(data>>16), byte(data>>8), byte(data))
+}
+
+func (b *Buffer) WriteInt64(data int64) {
+	b.WriteUInt64(uint64(data))
+}
+
+func (b *Buffer) WriteVarInt(data int32) {
+	for {
+		if data&0x80 == 0 {
+			b.WriteByte(byte(data))
+			return
+		}
+
+		b.WriteByte(byte((data & 0x7F) | 0x80))
+
+		data >>= 7
+	}
+}
+
+func (b *Buffer) WriteVarLong(data int64) {
+	for {
+		if data&0x80 == 0 {
+			b.WriteByte(byte(data))
+			return
+		}
+
+		b.WriteByte(byte((data & 0x7F) | 0x80))
+
+		data >>= 7
+	}
+}
+
 func (b *Buffer) Size() int {
 	return len(b.Data)
 }
