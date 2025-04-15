@@ -40,11 +40,6 @@ func (b *Buffer) ReadByte() (byte, error) {
 	return data, nil
 }
 
-func (b *Buffer) ReadUInt8() (uint8, error) {
-	val, err := b.ReadByte()
-	return uint8(val), err
-}
-
 func (b *Buffer) ReadUInt16() (uint16, error) {
 	bytes, err := b.Read(2)
 	if err != nil {
