@@ -1,6 +1,8 @@
 package buffer
 
-import "errors"
+import (
+	"errors"
+)
 
 type Buffer struct {
 	Data    []byte
@@ -92,6 +94,11 @@ func (b *Buffer) ReadVarInt() (int32, error) {
 
 	var val int32 = 0
 	for {
+		if pos >= 32 {
+			// varint too large
+			return 0, errors.New("VarInt too large")
+		}
+
 		byt, err := b.ReadByte()
 		if err != nil {
 			return 0, err
@@ -99,11 +106,6 @@ func (b *Buffer) ReadVarInt() (int32, error) {
 
 		val |= int32(byt&0x7F) << pos
 		pos += 7
-		if pos >= 32 {
-			// varint too large
-			return 0, errors.New("VarInt too large")
-		}
-
 		if byt&0x80 == 0 {
 			break
 		}
@@ -117,6 +119,11 @@ func (b *Buffer) ReadVarLong() (int64, error) {
 
 	var val int64 = 0
 	for {
+		if pos >= 64 {
+			// varint too large
+			return 0, errors.New("VarLong too large")
+		}
+
 		byt, err := b.ReadByte()
 		if err != nil {
 			return 0, err
@@ -124,10 +131,6 @@ func (b *Buffer) ReadVarLong() (int64, error) {
 
 		val |= int64(byt&0x7F) << pos
 		pos += 7
-		if pos >= 64 {
-			// varint too large
-			return 0, errors.New("VarLong too large")
-		}
 
 		if byt&0x80 == 0 {
 			break
