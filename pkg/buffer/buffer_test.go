@@ -2,73 +2,131 @@ package buffer
 
 import (
 	"errors"
+	"reflect"
 	"testing"
-	//"strconv"
 )
 
-func TestFullBuffer(t *testing.T) {
+func TestByte(t *testing.T) {
 	buf := MakeBuffer(make([]byte, 0))
-
-	readWriteTest(func() { buf.WriteByte(12) }, func() (int64, error) { val, err := buf.ReadByte(); return int64(val), err }, 12, nil, "byte", t)
-	readWriteTest(func() { buf.WriteUInt16(13) }, func() (int64, error) { val, err := buf.ReadUInt16(); return int64(val), err }, 13, nil, "uint16", t)
-	readWriteTest(func() { buf.WriteUInt32(14) }, func() (int64, error) { val, err := buf.ReadUInt32(); return int64(val), err }, 14, nil, "uint32", t)
-	readWriteTest(func() { buf.WriteUInt64(15) }, func() (int64, error) { val, err := buf.ReadUInt64(); return int64(val), err }, 15, nil, "uint64", t)
-
-	readWriteTest(func() { buf.WriteInt8(22) }, func() (int64, error) { val, err := buf.ReadInt8(); return int64(val), err }, 22, nil, "int8", t)
-	readWriteTest(func() { buf.WriteInt16(23) }, func() (int64, error) { val, err := buf.ReadInt16(); return int64(val), err }, 23, nil, "int16", t)
-	readWriteTest(func() { buf.WriteInt32(24) }, func() (int64, error) { val, err := buf.ReadInt32(); return int64(val), err }, 24, nil, "int32", t)
-	readWriteTest(func() { buf.WriteInt64(25) }, func() (int64, error) { val, err := buf.ReadInt64(); return int64(val), err }, 25, nil, "int64", t)
-
-	readWriteTest(func() { buf.WriteVarInt(38374745) }, func() (int64, error) { val, err := buf.ReadVarInt(); return int64(val), err }, 38374745, nil, "varint", t)
-	readWriteTest(func() { buf.WriteVarLong(97878676878) }, func() (int64, error) { val, err := buf.ReadVarLong(); return int64(val), err }, 97878676878, nil, "varlong", t)
-
+	data := byte(235)
+	readWriteTest(func() { buf.WriteByte(data) }, func() (interface{}, error) { val, err := buf.ReadByte(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
 }
 
-func TestIndependent(t *testing.T) {
+func TestBytes(t *testing.T) {
 	buf := MakeBuffer(make([]byte, 0))
-
-	readWriteTest(func() { buf.WriteByte(12) }, func() (int64, error) { val, err := buf.ReadByte(); return int64(val), err }, 12, nil, "byte", t)
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteUInt16(13) }, func() (int64, error) { val, err := buf.ReadUInt16(); return int64(val), err }, 13, nil, "uint16", t)
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteUInt32(14) }, func() (int64, error) { val, err := buf.ReadUInt32(); return int64(val), err }, 14, nil, "uint32", t)
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteUInt64(15) }, func() (int64, error) { val, err := buf.ReadUInt64(); return int64(val), err }, 15, nil, "uint64", t)
-	buf = MakeBuffer(make([]byte, 0))
-
-	readWriteTest(func() { buf.WriteInt8(22) }, func() (int64, error) { val, err := buf.ReadInt8(); return int64(val), err }, 22, nil, "int8", t)
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteInt16(23) }, func() (int64, error) { val, err := buf.ReadInt16(); return int64(val), err }, 23, nil, "int16", t)
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteInt32(24) }, func() (int64, error) { val, err := buf.ReadInt32(); return int64(val), err }, 24, nil, "int32", t)
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteInt64(25) }, func() (int64, error) { val, err := buf.ReadInt64(); return int64(val), err }, 25, nil, "int64", t)
-
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteVarInt(343434) }, func() (int64, error) { val, err := buf.ReadVarInt(); return int64(val), err }, 343434, nil, "varint", t)
-	buf = MakeBuffer(make([]byte, 0))
-	readWriteTest(func() { buf.WriteVarLong(97878676878) }, func() (int64, error) { val, err := buf.ReadVarLong(); return int64(val), err }, 97878676878, nil, "varlong", t)
-
-	readWriteTest(func() { buf.WriteVarLong(3434343432132312312) }, func() (int64, error) { val, err := buf.ReadVarInt(); return int64(val), err }, 0, errors.New("VarInt too large"), "varint", t)
-	readWriteTest(func() { buf.Write([]byte{0xA9, 0xD4, 0xF0, 0x9E, 0x81, 0x7F}) }, func() (int64, error) { val, err := buf.ReadVarLong(); return int64(val), err }, 0, errors.New("VarLong too large"), "varlong", t)
+	data := []byte{2, 30, 9, 2, 6, 4, 3, 30, 20, 60, 99, 101, 100, 200, 182, 254, 255, 0}
+	readWriteTest(func() { buf.Write(data) }, func() (interface{}, error) { val, err := buf.Read(len(data)); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
 }
 
-func readWriteTest(write func(), read func() (int64, error), expectedRes int64, expectedErr error, name string, t *testing.T) {
+func TestUInt16(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := uint16(50345)
+	readWriteTest(func() { buf.WriteUInt16(data) }, func() (interface{}, error) { val, err := buf.ReadUInt16(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestUInt32(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := uint32(402938478)
+	readWriteTest(func() { buf.WriteUInt32(data) }, func() (interface{}, error) { val, err := buf.ReadUInt32(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestUInt64(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := uint64(18039487574673633333)
+	readWriteTest(func() { buf.WriteUInt64(data) }, func() (interface{}, error) { val, err := buf.ReadUInt64(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestInt8(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := int8(116)
+	readWriteTest(func() { buf.WriteInt8(data) }, func() (interface{}, error) { val, err := buf.ReadInt8(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestInt16(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := int16(30295)
+	readWriteTest(func() { buf.WriteInt16(data) }, func() (interface{}, error) { val, err := buf.ReadInt16(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestInt32(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := int32(2039485765)
+	readWriteTest(func() { buf.WriteInt32(data) }, func() (interface{}, error) { val, err := buf.ReadInt32(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestInt64(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := int64(8418984723987492834)
+	readWriteTest(func() { buf.WriteInt64(data) }, func() (interface{}, error) { val, err := buf.ReadInt64(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestVarInt(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := int32(2019283840)
+	readWriteTest(func() { buf.WriteVarInt(data) }, func() (interface{}, error) { val, err := buf.ReadVarInt(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestVarLong(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	data := int64(8444038472213948273)
+	readWriteTest(func() { buf.WriteVarLong(data) }, func() (interface{}, error) { val, err := buf.ReadVarLong(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestVarIntOverflow(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	readWriteTest(func() { buf.WriteVarLong(3434343432132312312) }, func() (interface{}, error) { val, err := buf.ReadVarInt(); return val, err }, 0, errors.New("VarInt too large"), t)
+}
+
+func TestVarLongOverflow(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	readWriteTest(func() {
+		buf.Write([]byte{
+			0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+			0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+			0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+			0xFF, 0xFF, 0x7F,
+		})
+	}, func() (interface{}, error) { val, err := buf.ReadVarLong(); return val, err }, 0, errors.New("VarLong too large"), t)
+}
+
+func TestOutOfBounds(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	readWriteTest(func() {}, func() (interface{}, error) { val, err := buf.ReadByte(); return val, err }, 12, errors.New("out of bounds"), t)
+}
+
+func readWriteTest(write func(), read func() (interface{}, error), expectedRes interface{}, expectedErr error, t *testing.T) {
 	write()
 	res, err := read()
 	if expectedErr != nil {
-		if err != nil && errors.Is(err, expectedErr) {
-			t.Logf("%s PASS: expecting error: %v, got error: %v", name, expectedErr, err)
-		} else {
-			t.Errorf("%s FAIL: expecting error: %v, got error: %v", name, expectedErr, err)
+		if !(err != nil && err.Error() == expectedErr.Error()) {
+			t.Errorf("expecting error: %v, got error: %v", expectedErr, err)
 		}
 
 		return
 	}
 
-	if res != expectedRes {
-		t.Errorf("%s FAIL: expecting %d, got %d", name, expectedRes, res)
-	} else {
-		t.Logf("%s PASS: expecting %d, got %d", name, expectedRes, res)
+	if err != nil {
+		t.Errorf("error occured: %v", err)
+		return
 	}
+
+	if !reflect.DeepEqual(res, expectedRes) {
+		t.Errorf("expecting %d, got %d", expectedRes, res)
+	}
+}
+
+func testBufferAdvance(buf *Buffer, t *testing.T) {
+	data := byte(29)
+	readWriteTest(func() { buf.WriteByte(data) }, func() (interface{}, error) { val, err := buf.ReadByte(); return val, err }, data, nil, t)
 }
