@@ -2,6 +2,7 @@ package buffer
 
 import (
 	"errors"
+	"github.com/google/uuid"
 )
 
 type Buffer struct {
@@ -140,6 +141,16 @@ func (b *Buffer) ReadVarLong() (int64, error) {
 	return val, nil
 }
 
+func (b *Buffer) ReadUUID() (uuid.UUID, error) {
+	data, err := b.Read(16)
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+	var u uuid.UUID
+	copy(u[:], data)
+	return u, nil
+}
+
 // WRITE
 
 func (b *Buffer) Write(data []byte) {
@@ -202,6 +213,10 @@ func (b *Buffer) WriteVarLong(data int64) {
 
 		data >>= 7
 	}
+}
+
+func (b *Buffer) WriteUUID(id uuid.UUID) {
+	b.Write(id[:])
 }
 
 func (b *Buffer) Size() int {

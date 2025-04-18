@@ -2,6 +2,7 @@ package buffer
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"reflect"
 	"testing"
 )
@@ -80,6 +81,13 @@ func TestVarLong(t *testing.T) {
 	buf := MakeBuffer(make([]byte, 0))
 	data := int64(8444038472213948273)
 	readWriteTest(func() { buf.WriteVarLong(data) }, func() (interface{}, error) { val, err := buf.ReadVarLong(); return val, err }, data, nil, t)
+	testBufferAdvance(buf, t)
+}
+
+func TestUUID(t *testing.T) {
+	buf := MakeBuffer(make([]byte, 0))
+	uid, _ := uuid.NewUUID()
+	readWriteTest(func() { buf.WriteUUID(uid) }, func() (interface{}, error) { val, err := buf.ReadUUID(); return val, err }, uid, nil, t)
 	testBufferAdvance(buf, t)
 }
 
